@@ -23,7 +23,8 @@ class DQN_CNN_Model(nn.Module):
         )        
         
     def _get_conv_out(self, shape):
-        o = self.conv(torch.zeros(1, *shape))
+        #o = self.conv(torch.zeros(1, *shape))
+        o = torch.zeros(1, *shape)
         return int(np.prod(o.size()))        
 
 
