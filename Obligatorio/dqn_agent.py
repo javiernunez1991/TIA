@@ -8,16 +8,16 @@ import numpy as np
 from abstract_agent import Agent
 
 class DQNAgent(Agent):
-    def __init__(self, gym_env, model, obs_processing_func, memory_buffer_size, batch_size, learning_rate, gamma, epsilon_i, epsilon_f, epsilon_anneal_time, epsilon_decay, episode_block):
-        super().__init__(gym_env, obs_processing_func, memory_buffer_size, batch_size, learning_rate, gamma, epsilon_i, epsilon_f, epsilon_anneal_time, epsilon_decay, episode_block)
-        # Asignar el modelo al agente (y enviarlo al dispositivo adecuado)
-        # self.policy_net = ?
-
-        # Asignar una función de costo (MSE)  (y enviarla al dispositivo adecuado)
-        # self.loss_function = ?
-
-        # Asignar un optimizador (Adam)
-        # self.optimizer = ?
+    
+    def __init__(self, gym_env, model, obs_processing_func, memory_buffer_size, batch_size, learning_rate, gamma, 
+                 epsilon_i, epsilon_f, epsilon_anneal_time, epsilon_decay, episode_block, device):
+       
+        super().__init__(gym_env, obs_processing_func, memory_buffer_size, batch_size, learning_rate, gamma, 
+                         epsilon_i, epsilon_f, epsilon_anneal_time, epsilon_decay, episode_block, device)
+        
+        self.policy_net = model.to(device) # Asignar el modelo al agente (y enviarlo al dispositivo adecuado)
+        self.loss_function = nn.CrossEntropyLoss().to(device) # Asignar una función de costo (MSE)  (y enviarla al dispositivo adecuado)
+        self.optimizer = optim.Adam(model.parameters(), lr=learning_rate) # Asignar un optimizador (Adam)
         
         
     
@@ -25,11 +25,14 @@ class DQNAgent(Agent):
       # Implementar. Seleccionando acciones epsilongreedy-mente si estamos entranando y completamente greedy en otro caso.
       pass
 
+
     def update_weights(self):
       if len(self.memory) > self.batch_size:
+          
             # Resetear gradientes
 
             # Obtener un minibatch de la memoria. Resultando en tensores de estados, acciones, recompensas, flags de terminacion y siguentes estados. 
+
 
             # Enviar los tensores al dispositivo correspondiente.
             #states = ?
