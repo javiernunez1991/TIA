@@ -14,8 +14,8 @@ class ReplayMemory:
         self.device = device
     
     def add(self, state, action, reward, done, next_state):
-        e = self.experience(state, action, reward, next_state, done) # Agrega una nueva experiencia a la memoria
-        self.memory.append(e)
+        e = self.experience(state, action, reward, done, next_state) 
+        self.memory.append(e) # Agrega una nueva experiencia a la memoria
 
     def sample(self, batch_size):
         batch = random.sample(self.memory, k=self.batch_size)
