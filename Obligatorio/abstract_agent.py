@@ -43,7 +43,7 @@ class Agent(ABC):
         frames = len(state)
         height, width = len(state[0][0]), len(state[0][0])
         n_actions = self.env.action_space.n
-        q_table = np.zeros( (frames, height, width), n_actions) # 4*84*84*6 --> frames * height * width * acion_space
+        q_table = np.zeros( (frames, height, width, n_actions) ) # 4*84*84*6 --> frames * height * width * acion_space
         current_episode_reward = 0.0
         
         for s in range(max_steps):
