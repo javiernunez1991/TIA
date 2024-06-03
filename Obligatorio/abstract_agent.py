@@ -42,8 +42,7 @@ class Agent(ABC):
         state, info = self.env.reset()   # inicializo state: Tiene 4 frames de 84x84 ??????????????????????????? OK ??????????????
         frames = len(state)
         height, width = len(state[0][0]), len(state[0][0])
-        n_actions = self.env.action_space.n
-        q_table = np.zeros( (frames, height, width, n_actions) ) # 4*84*84*6 --> frames * height * width * acion_space
+        q_table = np.zeros( (frames, height, width, self.env.action_space.n) ) # 4*84*84*6 --> frames * height * width * acion_space
         current_episode_reward = 0.0
         
         for s in range(max_steps):
