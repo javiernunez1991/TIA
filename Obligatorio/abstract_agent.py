@@ -14,7 +14,8 @@ class Agent(ABC):
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
         self.env = gym_env
         self.state_processing_function = obs_processing_func # Funcion phi para procesar los estados.
-        self.memory = memory_buffer_size # Asignarle memoria al agente
+        # self.memory = memory_buffer_size # Asignarle memoria al agente
+        self.memory = ReplayMemory(memory_buffer_size, device) # Asignarle memoria al agente
         self.batch_size = batch_size
         self.learning_rate = learning_rate
         self.gamma = gamma
@@ -28,52 +29,61 @@ class Agent(ABC):
     
     # def train(self, number_episodes = 50000, max_steps_episode = 10000, max_steps = 1_000_000, writer_name="default_writer_name"):
     def train(self, number_episodes, max_steps_episode, max_steps, writer_name="default_writer_name"):
-        # self.number_episodes = number_episodes
-        # self.max_steps_episode = max_steps_episode
-        # self.max_steps = max_steps
-        # self.writer_name = writer_name
-        
         
         rewards = []
         total_steps = 0
         writer = SummaryWriter(comment="-" + writer_name)
   
         for ep in tqdm(range(number_episodes), unit=' episodes'):
-          if total_steps > max_steps:
-              break # si supero la maxima cantidad de iteraciones, rompe el bucle
+            if total_steps > max_steps:
+                break # si supero la maxima cantidad de iteraciones, rompe el bucle
+        
+        # Observar estado inicial como indica el algoritmo
+        state, info = self.env.reset()   # inicializo state: Tiene 4 frames de 84x84 ??????????????????????????? OK ??????????????
+        frames = len(state)
+        height, width = len(state[0][0]), len(state[0][0])
+        n_actions = self.env.action_space.n
+        q_table = np.zeros( (frames, height, width), n_actions) # 4*84*84*6 --> frames * height * width * acion_space
+        current_episode_reward = 0.0
+        
+        for s in range(max_steps):
+            
+            # Seleccionar accion usando una política epsilon-greedy.
+            epsilon_update = self.compute_epsilon(s)
+            rnd = np.random.uniform()
+            if rnd < epsilon_update:
+                action = np.random.choice(self.env.action_space.n) # exploracion
+            else:
+                action = np.argmax(q_table[frames][height][width]) # explotacion ??????????????????????????? Q_TABLE ????????????????????????????????
+              
+            # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
+            self.env.reset()
+            next_state, reward, done, truncated, info = self.env.step(action)
+            current_episode_reward += reward
+            total_steps += 1
+  
+            # Guardar la transicion en la memoria
+            experience = Transition(state, action, reward, done, next_state)
+            self.memory.add(experience)
+
+            # Actualizar el estado
+
+
+            # Actualizar el modelo
+  
+            if done or truncated: 
+                break
           
-          # Observar estado inicial como indica el algoritmo
-          
+            rewards.append(current_episode_reward)
+            mean_reward = np.mean(rewards[-100:])
+            writer.add_scalar("epsilon", self.epsilon, total_steps)
+            writer.add_scalar("reward_100", mean_reward, total_steps)
+            writer.add_scalar("reward", current_episode_reward, total_steps)
   
-          current_episode_reward = 0.0
-          for s in range(max_steps):
-  
-              # Seleccionar accion usando una política epsilon-greedy.
-  
-              # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
-  
-              current_episode_reward += reward
-              total_steps += 1
-  
-              # Guardar la transicion en la memoria
-  
-              # Actualizar el estado
-  
-              # Actualizar el modelo
-  
-              if done: 
-                  break
-          
-          rewards.append(current_episode_reward)
-          mean_reward = np.mean(rewards[-100:])
-          writer.add_scalar("epsilon", self.epsilon, total_steps)
-          writer.add_scalar("reward_100", mean_reward, total_steps)
-          writer.add_scalar("reward", current_episode_reward, total_steps)
-  
-          # Report on the traning rewards every EPISODE BLOCK episodes
-          if ep % self.episode_block == 0:
-              avg_reward_last_eps = np.mean(rewards[-self.episode_block:])
-              print(f"Episode {ep} - Avg. Reward over the last {self.episode_block} episodes {avg_reward_last_eps} epsilon {self.epsilon} total steps {total_steps}")
+            # Report on the traning rewards every EPISODE BLOCK episodes
+            if ep % self.episode_block == 0:
+                avg_reward_last_eps = np.mean(rewards[-self.episode_block:])
+                print(f"Episode {ep} - Avg. Reward over the last {self.episode_block} episodes {avg_reward_last_eps} epsilon {self.epsilon} total steps {total_steps}")
   
         print(f"Episode {ep + 1} - Avg. Reward over the last {self.episode_block} episodes {np.mean(rewards[-self.episode_block:])} epsilon {self.epsilon} total steps {total_steps}")
   
@@ -110,6 +120,7 @@ class Agent(ABC):
         env.close()
         show_video()
 
+    ################################ SE MODIFICAN EN CADA AGENTE ###################################
     @abstractmethod
     def select_action(self, state, current_steps, train=True):
         pass
@@ -117,3 +128,4 @@ class Agent(ABC):
     @abstractmethod
     def update_weights(self):
         pass
+    #################################################################################################
