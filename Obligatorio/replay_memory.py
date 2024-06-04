@@ -1,5 +1,6 @@
 import random
 from collections import namedtuple, deque
+import numpy as np
 # import numpy as np
 # import torch
 
@@ -22,23 +23,26 @@ class ReplayMemory:
         return len(self.memory) # Tamaño actual de la memoria
 
 
-## CHEQUEO SI FUNCIONA    
-# replay = ReplayMemory(7)
-# replay.add(1, 11, 111, True, 1111)
-# replay.add(2, 22, 222, False, 2222)
-# replay.add(3, 33, 333, True, 3333) 
-# replay.add(4, 44, 444, True, 4444)
-# replay.add(5, 55, 555, False, 5555)
-# replay.add(6, 66, 666, True, 6666)
-# replay.add(7, 77, 777, False, 7777)
-# replay.add(8, 88, 888, False, 8888)
-# replay.add(9, 99, 999, True, 9999)
-# replay.add(10, 1010, 101010, False, 10101010)
+## CHEQUEO SI FUNCIONA  
+# buffer_size = 7
+# batch_size = 3  
+# replay = ReplayMemory(buffer_size)
+# replay.add(process_state(np.random.rand(4, 84, 84).astype(np.float32)), 11, 111, True, process_state(np.random.rand(4, 84, 84)))
+# replay.add(process_state(np.random.rand(4, 84, 84).astype(np.float32)), 22, 222, False, process_state(np.random.rand(4, 84, 84)))
+# replay.add(process_state(np.random.rand(4, 84, 84).astype(np.float32)), 33, 333, True, process_state(np.random.rand(4, 84, 84))) 
+# replay.add(process_state(np.random.rand(4, 84, 84).astype(np.float32)), 44, 444, True, process_state(np.random.rand(4, 84, 84)))
+# replay.add(process_state(np.random.rand(4, 84, 84).astype(np.float32)), 55, 555, False, process_state(np.random.rand(4, 84, 84)))
+# replay.add(process_state(np.random.rand(4, 84, 84).astype(np.float32)), 66, 666, True, process_state(np.random.rand(4, 84, 84)))
+# replay.add(process_state(np.random.rand(4, 84, 84).astype(np.float32)), 77, 777, False, process_state(np.random.rand(4, 84, 84)))
+# replay.add(process_state(np.random.rand(4, 84, 84).astype(np.float32)), 88, 888, False, process_state(np.random.rand(4, 84, 84)))
+# replay.add(process_state(np.random.rand(4, 84, 84).astype(np.float32)), 99, 999, True, process_state(np.random.rand(4, 84, 84)))
+# replay.add(process_state(np.random.rand(4, 84, 84).astype(np.float32)), 1010, 101010, False, process_state(np.random.rand(4, 84, 84)))
+# mini_batch = replay.sample(batch_size)
+# states = torch.stack([mini_batch[i].state for i in range(batch_size)])
+# print(f'states.size: {states.size()}')
+# actions = torch.tensor([mini_batch[i].action for i in range(batch_size)])
+# rewards = torch.tensor([mini_batch[i].reward for i in range(batch_size)])
+# dones = torch.tensor([int(mini_batch[i].done) for i in range(batch_size)])
+# next_state = torch.stack([mini_batch[i].next_state for i in range(batch_size)])
 
-# device = 'cpu'
-# mini_batch = replay.sample(3)
-# states = torch.from_numpy(np.vstack([e.state for e in mini_batch if e is not None])).float().to(device)
-# actions = torch.from_numpy(np.vstack([e.action for e in mini_batch if e is not None])).long().to(device)
-# rewards = torch.from_numpy(np.vstack([e.reward for e in mini_batch if e is not None])).float().to(device)
-# dones = torch.from_numpy(np.vstack([e.done for e in mini_batch if e is not None]).astype(np.uint8)).float().to(device)
-# next_states = torch.from_numpy(np.vstack([e.next_state for e in mini_batch if e is not None])).float().to(device)
+# net(states)
