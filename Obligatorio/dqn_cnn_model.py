@@ -4,7 +4,7 @@ import torch.nn as nn
 # import torch.nn.functional as F
 
 class DQN_CNN_Model(nn.Module):
-    def __init__(self, env_inputs, n_actions):
+    def __init__(self, state_shape, n_actions):
         super().__init__()
         
         self.conv = nn.Sequential(
@@ -15,7 +15,7 @@ class DQN_CNN_Model(nn.Module):
             )
         
         self.fc = nn.Sequential(
-            nn.Linear(self._get_conv_out(env_inputs), 256), # conecto las neuronas obtenidas con 256 nuevas neuronas ocultas
+            nn.Linear(self._get_conv_out(state_shape), 256), # conecto las neuronas obtenidas con 256 nuevas neuronas ocultas
             nn.ReLU(), # aplico reLU
             nn.Linear(256, n_actions) # conecto las 256 neuronas ocultas, con la capa final de 6 neuronas (tantas como acciones posibles)
         )        
@@ -30,20 +30,6 @@ class DQN_CNN_Model(nn.Module):
 
     def forward(self, x):
         conv_out = self.conv(x).view(x.size()[0], -1) # Aplano los feature maps
-        fc_out = self.fc(conv_out)
-        return fc_out 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        q_values = self.fc(conv_out)
+        return q_values       
+        
