@@ -25,10 +25,6 @@ class Agent(ABC):
         self.episode_block = episode_block
         self.total_steps = 0
         
-        state, info = self.env.reset()
-        self.frames = len(state)
-        self.height, self.width = len(self.state[0][0]), len(self.state[0][0])
-        self.q_table = np.zeros( (self.frames, self.height, self.width, self.env.action_space.n) ) # 4*84*84*6 --> frames * height * width * acion_space
     
     # def train(self, number_episodes = 50000, max_steps_episode = 10000, max_steps = 1_000_000, writer_name="default_writer_name"):
     def train(self, number_episodes, max_steps_episode, max_steps, writer_name="default_writer_name"):
@@ -42,7 +38,8 @@ class Agent(ABC):
                 break
         
             # Observar estado inicial como indica el algoritmo
-            self.state, self.info = self.env.reset()   # inicializo state: Tiene 4 frames de 84x84 ########################### OK ######################################
+            state, info = self.env.reset()   # inicializo state: Tiene 4 frames de 84x84 
+            state = self.state_processing_function(state) # paso el state a tensor (funcion process_state de la notebook)
             current_episode_reward = 0.0
             done = False
             truncated = False
@@ -50,22 +47,23 @@ class Agent(ABC):
             for s in range(max_steps):
                 
                 # Seleccionar accion usando una política epsilon-greedy.
-                action = self.select_action(self.state, s, True)
+                action = self.select_action(state, s, True)
                   
                 # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
                 next_state, reward, done, truncated, info = self.env.step(action)
+                next_state = self.state_processing_function(next_state) # paso el state a tensor (funcion process_state de la notebook)
                 current_episode_reward += reward
                 total_steps += 1
       
                 # Guardar la transicion en la memoria
-                experience = Transition(self.state, action, reward, done, next_state)
+                experience = Transition(state, action, reward, done, next_state)
                 self.memory.add(experience)
     
                 # Actualizar el estado
-                self.state = next_state # ############################################################################### OK ? #######################################
+                state = next_state
     
                 # Actualizar el modelo
-                
+                # LLAMAR AL UPDATE_WEIGHT
         
                 if done: 
                     break
@@ -100,8 +98,8 @@ class Agent(ABC):
     
         # Observar estado inicial como indica el algoritmo
         state, info = env.reset()
+        s = 0
         env.start_video_recorder()
-        s = 0        
         
         while not done:
             env.render()  # Queremos hacer render para obtener un video al final.
