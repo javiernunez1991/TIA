@@ -3,9 +3,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
-from replay_memory import ReplayMemory, Transition
+# from replay_memory import ReplayMemory, Transition
 from abstract_agent import Agent
-from tqdm.notebook import tqdm
+# from tqdm.notebook import tqdm
 import numpy as np
 
 
@@ -25,25 +25,37 @@ class DQNAgent(Agent):
         
     # @abstractmethod de abstract_agent.py
     def select_action(self, state, current_steps, train=True):
-      # Implementar. Seleccionando acciones epsilongreedy-mente si estamos entranando y completamente greedy en otro caso.
-      pass
+        
+        # Seleccionando acciones epsilongreedy-mente si estamos entranando y completamente greedy en otro caso.
+        if train:
+            epsilon_update = self.compute_epsilon(current_steps)
+            rnd = np.random.uniform()
+            if rnd < epsilon_update:
+                action = np.random.choice(self.env.action_space.n) # exploracion
+            else:
+                action = np.argmax(self.q_table[self.frames][self.height][self.width]) # explotacion
+        else:
+            action = np.argmax(self.q_table[self.frames][self.height][self.width]) # explotacion
+        
+        return action
 
 
     # @abstractmethod de abstract_agent.py
     def update_weights(self):
-      if len(self.memory) > self.batch_size:
+        if len(self.memory) > self.batch_size:
           
             # Resetear gradientes
+            self.optimizer.zero_grad()
 
             # Obtener un minibatch de la memoria. Resultando en tensores de estados, acciones, recompensas, flags de terminacion y siguentes estados. 
-
+            mini_batch = self.memory.sample(self.batch_size)
 
             # Enviar los tensores al dispositivo correspondiente.
-            #states = ?
-            #actions = ?
-            #rewards = ?
-            #dones = ?  # Dones deberia ser 0 y 1; no True y False. Pueden usar .float() en un tensor para convertirlo
-            #next_states = ?
+            states = torch.from_numpy(np.vstack([e.state for e in mini_batch if e is not None])).float().to(self.device)
+            actions = torch.from_numpy(np.vstack([e.action for e in mini_batch if e is not None])).long().to(self.device)
+            rewards = torch.from_numpy(np.vstack([e.reward for e in mini_batch if e is not None])).float().to(self.device)
+            dones = torch.from_numpy(np.vstack([e.done for e in mini_batch if e is not None]).astype(np.uint8)).float().to(self.device)
+            next_states = torch.from_numpy(np.vstack([e.next_state for e in mini_batch if e is not None])).float().to(self.device)
 
             # Obetener el valor estado-accion (Q) de acuerdo a la policy net para todo elemento (estados) del minibatch.
             #q_actual = ?
@@ -57,4 +69,5 @@ class DQNAgent(Agent):
 
             # Compute el costo y actualice los pesos.
             # En Pytorch la funcion de costo se llaman con (predicciones, objetivos) en ese orden.
+            
             pass
