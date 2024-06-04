@@ -33,9 +33,15 @@ class DQNAgent(Agent):
             if rnd < epsilon_update:
                 action = np.random.choice(self.env.action_space.n) # exploracion
             else:
-                action = np.argmax(self.q_table[self.frames][self.height][self.width]) # explotacion
+                with torch.no_grad():
+                    aux = torch.FloatTensor(state).unsqueeze(0).to(self.device)
+                    q_values = self.policy_net(aux)
+                    action = np.argmax(q_values.tolist()[0]) # explotacion
         else:
-            action = np.argmax(self.q_table[self.frames][self.height][self.width]) # explotacion
+            with torch.no_grad():
+                aux = torch.FloatTensor(state).unsqueeze(0).to(self.device)
+                q_values = self.policy_net(aux)
+                action = np.argmax(q_values.tolist()[0]) # explotacion
         
         return action
 
@@ -49,8 +55,6 @@ class DQNAgent(Agent):
 
             # Obtener un minibatch de la memoria. Resultando en tensores de estados, acciones, recompensas, flags de terminacion y siguentes estados. 
             mini_batch = self.memory.sample(self.batch_size)
-
-            # Enviar los tensores al dispositivo correspondiente.
             states = torch.from_numpy(np.vstack([e.state for e in mini_batch if e is not None])).float().to(self.device)
             actions = torch.from_numpy(np.vstack([e.action for e in mini_batch if e is not None])).long().to(self.device)
             rewards = torch.from_numpy(np.vstack([e.reward for e in mini_batch if e is not None])).float().to(self.device)
