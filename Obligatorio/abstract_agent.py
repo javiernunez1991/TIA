@@ -31,7 +31,8 @@ class Agent(ABC):
         
         rewards = []
         total_steps = 0
-        writer = SummaryWriter(comment="-" + writer_name)        
+        writer = SummaryWriter(comment="-" + writer_name)
+  
         for ep in tqdm(range(number_episodes), unit=' episodes'):
             if total_steps > max_steps:
                 break
@@ -82,12 +83,11 @@ class Agent(ABC):
                 # print(f"Episode {ep}: Avg. Reward: {avg_reward_last_eps}, over the last {self.episode_block} episodes - Epsilon: {self.epsilon} - TotalSteps: {total_steps}")
             print(f"Episode {ep + 1} - Avg. Reward {avg_reward_last_eps} over the last {self.episode_block} episodes - Epsilon {self.epsilon} - TotalSteps {total_steps}")
 
-                # print(f'TotalSteps: {total_steps}, Writer: {writer}')
         
-            torch.save(self.policy_net.state_dict(), "GenericDQNAgent.dat")
-            writer.close()
-      
-            return rewards
+        torch.save(self.policy_net.state_dict(), "GenericDQNAgent.dat")
+        writer.close()
+  
+        return rewards
     
         
     def compute_epsilon(self, steps_so_far):
