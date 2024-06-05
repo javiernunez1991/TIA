@@ -102,7 +102,7 @@ class Agent(ABC):
     
         # Observar estado inicial como indica el algoritmo
         state, info = env.reset()
-        state = self.state_processing_function(state)
+        state = self.state_processing_function(state, self.device)
         s = 0
         env.start_video_recorder()
         
@@ -113,7 +113,7 @@ class Agent(ABC):
             action = self.select_action(state, s, False)
 
             # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
-            next_state, reward, done, truncated, info = self.env.step(action)
+            next_state, reward, done, truncated, info = self.env.step(action, self.device)
             next_state = self.state_processing_function(next_state)
 
             if done:
