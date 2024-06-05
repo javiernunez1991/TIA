@@ -47,8 +47,8 @@ class Agent(ABC):
             for s in range(max_steps):
                 
                 # Seleccionar accion usando una política epsilon-greedy.
-                self.epsilon = self.compute_epsilon(total_steps)
-                action = self.select_action(state, s, self.epsilon, True)
+                self.epsilon = self.compute_epsilon(total_steps) # lo uso solo para los prints del final
+                action = self.select_action(state, s, True)
                   
                 # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
                 next_state, reward, done, truncated, info = self.env.step(action)
@@ -80,7 +80,7 @@ class Agent(ABC):
                 # Report on the traning rewards every EPISODE BLOCK episodes
                 if ep % self.episode_block == 0:
                     avg_reward_last_eps = np.mean(rewards[-self.episode_block:])
-                    print(f"Episode {ep} - Avg. Reward over the last {self.episode_block} episodes {avg_reward_last_eps} epsilon {self.epsilon} total steps {total_steps}")
+                    print(f"Episode {ep}: Avg. Reward over the last {self.episode_block} - Episodes {avg_reward_last_eps}, - Epsilon: {self.epsilon}, - TotalSteps: {total_steps}")
       
             print(f"Episode {ep + 1} - Avg. Reward over the last {self.episode_block} episodes {np.mean(rewards[-self.episode_block:])} epsilon {self.epsilon} total steps {total_steps}")
       
@@ -101,6 +101,7 @@ class Agent(ABC):
     
         # Observar estado inicial como indica el algoritmo
         state, info = env.reset()
+        state = self.state_processing_function(state)
         s = 0
         env.start_video_recorder()
         
@@ -112,6 +113,7 @@ class Agent(ABC):
 
             # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
             next_state, reward, done, truncated, info = self.env.step(action)
+            next_state = self.state_processing_function(next_state)
 
             if done:
                 break      
