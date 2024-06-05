@@ -47,7 +47,7 @@ class Agent(ABC):
             for s in range(max_steps):
                 
                 # Seleccionar accion usando una política epsilon-greedy.
-                self.epsilon = self.compute_epsilon(total_steps) # lo uso solo para los prints del final
+                self.epsilon = np.round(self.compute_epsilon(total_steps),5) # lo uso solo para los prints del final
                 action = self.select_action(state, s, True)
                   
                 # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
