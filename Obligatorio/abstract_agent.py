@@ -39,7 +39,7 @@ class Agent(ABC):
         
             # Observar estado inicial como indica el algoritmo
             state, info = self.env.reset()   # inicializo state: Tiene 4 frames de 84x84 
-            state = self.state_processing_function(state) # paso el state a tensor (funcion process_state de la notebook)
+            state = self.state_processing_function(state, self.device) # paso el state a tensor (funcion process_state de la notebook)
             current_episode_reward = 0.0
             done = False
             truncated = False
@@ -51,7 +51,8 @@ class Agent(ABC):
                   
                 # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
                 next_state, reward, done, truncated, info = self.env.step(action)
-                next_state = self.state_processing_function(next_state) # paso el state a tensor (funcion process_state de la notebook)
+                done = done or truncated
+                next_state = self.state_processing_function(next_state, self.device) # paso el state a tensor (funcion process_state de la notebook)
                 current_episode_reward += reward
                 total_steps += 1
       
@@ -63,7 +64,7 @@ class Agent(ABC):
                 state = next_state
     
                 # Actualizar el modelo
-                # LLAMAR AL UPDATE_WEIGHT
+                self.update_weights()
         
                 if done: 
                     break
