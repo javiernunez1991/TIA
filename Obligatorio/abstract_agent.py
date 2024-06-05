@@ -32,7 +32,7 @@ class Agent(ABC):
         rewards = []
         total_steps = 0
         writer = SummaryWriter(comment="-" + writer_name)
-  
+        print("")
         for ep in tqdm(range(number_episodes), unit=' episodes'):
             if total_steps > max_steps:
                 break
