@@ -65,14 +65,14 @@ class DQNAgent(Agent):
             next_states = torch.stack([mini_batch[i].next_state for i in range(self.batch_size)])
 
             # Obetener el valor estado-accion (Q) de acuerdo a la policy net para todo elemento (estados) del minibatch.
-            q_values = self.policy_net(states).to_device(self.device) # states es un minibatch de: (batch_size x 4 x 84 x 84)
+            q_values = self.policy_net(states) # states es un minibatch de: (batch_size x 4 x 84 x 84)
             state_q_values = q_values.gather(1, actions.unsqueeze(1))#.squeeze()#.cpu().sum().item()
             
 
             # Obtener max a' Q para los siguientes estados (del minibatch). Es importante hacer .detach() al resultado de este computo.
             # Si el estado siguiente es terminal (done) este valor debería ser 0.
-            next_q_values = self.policy_net(next_states).to_device(self.device)
-            q_next_states = torch.max(next_q_values, dim=1)#.to_device(self.device)#.cpu().sum().item()
+            next_q_values = self.policy_net(next_states)
+            q_next_states = torch.max(next_q_values, dim=1)#.cpu().sum().item()
             max_next_q_values = q_next_states.values.detach()
         
 
