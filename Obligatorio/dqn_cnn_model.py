@@ -32,4 +32,3 @@ class DQN_CNN_Model(nn.Module):
         conv_out = self.conv(x).view(x.size()[0], -1) # Aplano los feature maps
         q_values = self.fc(conv_out)
         return q_values       
-        
