@@ -79,7 +79,7 @@ class Agent(ABC):
       
                 # Report on the traning rewards every EPISODE BLOCK episodes
                 if ep % self.episode_block == 0:
-                    avg_reward_last_eps = np.mean(rewards[-self.episode_block:])
+                    avg_reward_last_eps = np.round(np.mean(rewards[-self.episode_block:]),2)
                     print(f"Episode {ep}: Avg. Reward over the last {self.episode_block} - Episodes {avg_reward_last_eps}, - Epsilon: {self.epsilon}, - TotalSteps: {total_steps}")
       
             print(f"Episode {ep + 1} - Avg. Reward over the last {self.episode_block} episodes {np.mean(rewards[-self.episode_block:])} epsilon {self.epsilon} total steps {total_steps}")
