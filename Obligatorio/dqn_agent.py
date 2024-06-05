@@ -78,11 +78,11 @@ class DQNAgent(Agent):
 
             # Compute el target de DQN de acuerdo a la Ecuacion (3) del paper.    
             target = rewards + (1 - dones) * self.gamma * max_next_q_values
-            # error = target - state_q_values
+            target_labels = torch.argmax(target, dim=1)
 
             # Compute el costo y actualice los pesos.
             # En Pytorch la funcion de costo se llaman con (predicciones, objetivos) en ese orden.
             self.optimizer.zero_grad()  # Reseteo gradiente
-            loss = self.loss_function(target, state_q_values)  # Calculate el error
+            loss = self.loss_function(target_labels, state_q_values)  # Calculate el error
             loss.backward()  # Backpropagate loss
             self.optimizer.step()  # Update model weights
