@@ -20,7 +20,7 @@ class DQNAgent(Agent):
         
         self.policy_net = model.to(device) # Asignar el modelo al agente (y enviarlo al dispositivo adecuado)
         self.loss_function = nn.CrossEntropyLoss().to(device) # Asignar una función de costo (MSE)  (y enviarla al dispositivo adecuado)
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, momentum=0.9) # Asignar un optimizador (Adam)
+        self.optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate) # Asignar un optimizador (Adam)
         
                  
     # @abstractmethod de abstract_agent.py
