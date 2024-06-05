@@ -70,7 +70,6 @@ class Agent(ABC):
                 if done: 
                     break
               
-                
                 rewards.append(current_episode_reward)
                 mean_reward = np.mean(rewards[-100:])
                 writer.add_scalar("epsilon", self.epsilon, total_steps)
@@ -79,11 +78,12 @@ class Agent(ABC):
                 avg_reward_last_eps = np.round(np.mean(rewards[-self.episode_block:]),2)
       
                 # Report on the traning rewards every EPISODE BLOCK episodes
-            #     if ep % self.episode_block == 0:    
-            #         # print(f"Episode {ep}: Avg. Reward over the last {self.episode_block} episodes, {avg_reward_last_eps}, - Epsilon: {self.epsilon}, - TotalSteps: {total_steps}")
-            #         print(f"Episode {ep}: Avg. Reward: {avg_reward_last_eps}, over the last {self.episode_block} episodes - Epsilon: {self.epsilon} - TotalSteps: {total_steps}")
-            # print(f"Episode {ep + 1} - Avg. Reward {avg_reward_last_eps} over the last {self.episode_block} episodes - Epsilon {self.epsilon} - TotalSteps {total_steps}")
-                print(f'TotalSteps: {total_steps}, Writer: {writer}')
+                if ep % self.episode_block == 0:    
+                    print(f"Episode {ep}: Avg. Reward over the last {self.episode_block} episodes, {avg_reward_last_eps}, - Epsilon: {self.epsilon}, - TotalSteps: {total_steps}")
+                    # print(f"Episode {ep}: Avg. Reward: {avg_reward_last_eps}, over the last {self.episode_block} episodes - Epsilon: {self.epsilon} - TotalSteps: {total_steps}")
+                print(f"Episode {ep + 1} - Avg. Reward {avg_reward_last_eps} over the last {self.episode_block} episodes - Epsilon {self.epsilon} - TotalSteps {total_steps}")
+
+                # print(f'TotalSteps: {total_steps}, Writer: {writer}')
         
             torch.save(self.policy_net.state_dict(), "GenericDQNAgent.dat")
             writer.close()
