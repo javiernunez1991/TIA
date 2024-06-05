@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-# import torch.nn.functional as F
+import torch.nn.functional as F
 import torch.optim as optim
 # from torch.utils.tensorboard import SummaryWriter
 # from replay_memory import ReplayMemory, Transition
@@ -19,19 +19,19 @@ class DQNAgent(Agent):
                          epsilon_i, epsilon_f, epsilon_anneal_time, epsilon_decay, episode_block, device)
         
         self.policy_net = model.to(device) # Asignar el modelo al agente (y enviarlo al dispositivo adecuado)
-        self.loss_function = nn.CrossEntropyLoss().to(device) # Asignar una función de costo (MSE)  (y enviarla al dispositivo adecuado)
+        # self.loss_function = F.mse_loss(q, target).to(device) # Asignar una función de costo (MSE)  (y enviarla al dispositivo adecuado)
         self.optimizer = optim.Adam(model.parameters(), lr=learning_rate) # Asignar un optimizador (Adam)
         
                  
     # @abstractmethod de abstract_agent.py
-    def select_action(self, state, current_steps, eps, train=True):
+    def select_action(self, state, current_steps, train=True):
         
         # Seleccionando acciones epsilongreedy-mente si estamos entranando y completamente greedy en otro caso.
         if train:
-            # epsilon_update = self.compute_epsilon(current_steps)
+            epsilon_update = self.compute_epsilon(current_steps)
             rnd = np.random.uniform()
-            # if rnd < epsilon_update:
-            if rnd < eps:
+            if rnd < epsilon_update:
+            # if rnd < eps:
                 action = np.random.choice(self.env.action_space.n) # exploracion
             else:
                 with torch.no_grad():
@@ -78,11 +78,12 @@ class DQNAgent(Agent):
 
             # Compute el target de DQN de acuerdo a la Ecuacion (3) del paper.    
             target = rewards + (1 - dones) * self.gamma * max_next_q_values
-            target_labels = torch.argmax(target, dim=1)
+            # target_labels = torch.argmax(target, dim=1)
 
             # Compute el costo y actualice los pesos.
             # En Pytorch la funcion de costo se llaman con (predicciones, objetivos) en ese orden.
             self.optimizer.zero_grad()  # Reseteo gradiente
-            loss = self.loss_function(target_labels, state_q_values)  # Calculate el error
+            # loss = self.loss_function(target_labels, state_q_values)  # Calculate el error
+            loss = F.mse_loss(target, state_q_values)
             loss.backward()  # Backpropagate loss
             self.optimizer.step()  # Update model weights
