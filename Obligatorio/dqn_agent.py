@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+# import torch.nn.functional as F
 import torch.optim as optim
-from torch.utils.tensorboard import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
 # from replay_memory import ReplayMemory, Transition
 from abstract_agent import Agent
 # from tqdm.notebook import tqdm
@@ -20,17 +20,18 @@ class DQNAgent(Agent):
         
         self.policy_net = model.to(device) # Asignar el modelo al agente (y enviarlo al dispositivo adecuado)
         self.loss_function = nn.CrossEntropyLoss().to(device) # Asignar una función de costo (MSE)  (y enviarla al dispositivo adecuado)
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate) # Asignar un optimizador (Adam)
+        self.optimizer = optim.Adam(model.parameters(), lr=learning_rate) # Asignar un optimizador (Adam)
         
                  
     # @abstractmethod de abstract_agent.py
-    def select_action(self, state, current_steps, train=True):
+    def select_action(self, state, current_steps, eps, train=True):
         
         # Seleccionando acciones epsilongreedy-mente si estamos entranando y completamente greedy en otro caso.
         if train:
-            epsilon_update = self.compute_epsilon(current_steps)
+            # epsilon_update = self.compute_epsilon(current_steps)
             rnd = np.random.uniform()
-            if rnd < epsilon_update:
+            # if rnd < epsilon_update:
+            if rnd < eps:
                 action = np.random.choice(self.env.action_space.n) # exploracion
             else:
                 with torch.no_grad():
