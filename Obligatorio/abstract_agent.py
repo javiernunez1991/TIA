@@ -81,7 +81,7 @@ class Agent(ABC):
             if ep % self.episode_block == 0:    
                 print(f"Episode {ep}: Avg. Reward over the last {self.episode_block} episodes, {avg_reward_last_eps}, - Epsilon: {self.epsilon}, - TotalSteps: {total_steps}")
                 # print(f"Episode {ep}: Avg. Reward: {avg_reward_last_eps}, over the last {self.episode_block} episodes - Epsilon: {self.epsilon} - TotalSteps: {total_steps}")
-            print(f"Episode {ep + 1} - Avg. Reward {avg_reward_last_eps} over the last {self.episode_block} episodes - Epsilon {self.epsilon} - TotalSteps {total_steps}")
+        print(f"Episode {ep + 1} - Avg. Reward {avg_reward_last_eps} over the last {self.episode_block} episodes - Epsilon {self.epsilon} - TotalSteps {total_steps}")
 
         
         torch.save(self.policy_net.state_dict(), "GenericDQNAgent.dat")
