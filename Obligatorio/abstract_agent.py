@@ -47,7 +47,8 @@ class Agent(ABC):
             for s in range(max_steps):
                 
                 # Seleccionar accion usando una política epsilon-greedy.
-                action = self.select_action(state, s, True)
+                self.epsilon = self.compute_epsilon(total_steps)
+                action = self.select_action(state, s, self.epsilon, True)
                   
                 # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
                 next_state, reward, done, truncated, info = self.env.step(action)
@@ -69,6 +70,7 @@ class Agent(ABC):
                 if done: 
                     break
               
+                
                 rewards.append(current_episode_reward)
                 mean_reward = np.mean(rewards[-100:])
                 writer.add_scalar("epsilon", self.epsilon, total_steps)
