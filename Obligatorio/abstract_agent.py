@@ -113,8 +113,8 @@ class Agent(ABC):
             action = self.select_action(state, s, False)
 
             # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
-            next_state, reward, done, truncated, info = self.env.step(action, self.device)
-            next_state = self.state_processing_function(next_state)
+            next_state, reward, done, truncated, info = self.env.step(action)
+            next_state = self.state_processing_function(next_state, self.device)
 
             if done:
                 break      
