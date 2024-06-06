@@ -58,11 +58,11 @@ class DQNAgent(Agent):
 
             # Obtener un minibatch de la memoria. Resultando en tensores de estados, acciones, recompensas, flags de terminacion y siguentes estados. 
             mini_batch = self.memory.sample(self.batch_size)
-            states = torch.stack([mini_batch[i].state for i in range(self.batch_size)])
-            actions = torch.tensor([mini_batch[i].action for i in range(self.batch_size)])
-            rewards = torch.tensor([mini_batch[i].reward for i in range(self.batch_size)])
-            dones = torch.tensor([int(mini_batch[i].done) for i in range(self.batch_size)]) # paso los T-F, a 1-0
-            next_states = torch.stack([mini_batch[i].next_state for i in range(self.batch_size)])
+            states = torch.stack([mini_batch[i].state for i in range(self.batch_size)]).to(self.device)
+            actions = torch.tensor([mini_batch[i].action for i in range(self.batch_size)]).to(self.device)
+            rewards = torch.tensor([mini_batch[i].reward for i in range(self.batch_size)]).to(self.device)
+            dones = torch.tensor([int(mini_batch[i].done) for i in range(self.batch_size)]).to(self.device) # paso los T-F, a 1-0
+            next_states = torch.stack([mini_batch[i].next_state for i in range(self.batch_size)]).to(self.device)
 
             # Obetener el valor estado-accion (Q) de acuerdo a la policy net para todo elemento (estados) del minibatch.
             q_values = self.policy_net(states) # states es un minibatch de: (batch_size x 4 x 84 x 84)
