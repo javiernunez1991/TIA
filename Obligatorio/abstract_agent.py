@@ -103,7 +103,7 @@ class Agent(ABC):
         state, info = env.reset()
         state = self.state_processing_function(state, self.device)
         s = 0
-        #env.start_video_recorder()
+        env.start_video_recorder()
         
         while not done:
             env.render()  # Queremos hacer render para obtener un video al final.
@@ -122,7 +122,7 @@ class Agent(ABC):
             state = next_state
             s += 1
             
-        #env.close_video_recorder()
+        env.close_video_recorder()
         env.close()
         show_video()
         
