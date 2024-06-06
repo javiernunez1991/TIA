@@ -35,14 +35,14 @@ class DQNAgent(Agent):
                 action = np.random.choice(self.env.action_space.n) # exploracion
             else:
                 with torch.no_grad():
-                    aux = torch.FloatTensor(state).unsqueeze(0)#.to(self.device)
-                    # aux = state.unsqueeze(0).to(self.device)
+                    # aux = torch.FloatTensor(state).unsqueeze(0)#.to(self.device)
+                    aux = state.unsqueeze(0)#.to(self.device)
                     q_values = self.policy_net(aux)
                     action = np.argmax(q_values.tolist()[0]) # explotacion
         else:
             with torch.no_grad():
-                aux = torch.FloatTensor(state).unsqueeze(0)#.to(self.device)
-                # aux = state.unsqueeze(0).to(self.device)
+                #aux = torch.FloatTensor(state).unsqueeze(0)#.to(self.device)
+                aux = state.unsqueeze(0)#.to(self.device)
                 q_values = self.policy_net(aux)
                 action = np.argmax(q_values.tolist()[0]) # explotacion
         
