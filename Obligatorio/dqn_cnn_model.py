@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import torch.nn as nn
-# import torch.nn.functional as F
+import torch.nn.functional as F
 
 class DQN_CNN_Model(nn.Module):
     def __init__(self, state_shape, n_actions):
