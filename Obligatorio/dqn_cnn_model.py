@@ -32,3 +32,15 @@ class DQN_CNN_Model(nn.Module):
         conv_out = self.conv(x).view(x.size()[0], -1) # Aplano los feature maps
         q_values = F.softmax(self.fc(conv_out), dim=1)
         return q_values       
+
+
+class DQN_Model(nn.Module):
+    def __init__(self, state_shape, n_actions):
+        super().__init__()
+        
+        self.fc1 = nn.Linear(in_features=input_dim, out_features=128)
+        self.output = nn.Linear(in_features=128, out_features=output_dim)
+
+    def forward(self, env_input):
+        result = F.relu(self.fc1(env_input))
+        return self.output(result)
