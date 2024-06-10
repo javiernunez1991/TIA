@@ -24,13 +24,13 @@ class DQNAgent(Agent):
         
                  
     # @abstractmethod de abstract_agent.py
-    def select_action(self, state, current_steps, train=True):
+    def select_action(self, state, train=True):
         
         # Seleccionando acciones epsilongreedy-mente si estamos entrenando y completamente greedy en otro caso.
         if train:
-            epsilon_update = self.compute_epsilon(current_steps)
+            #epsilon_update = self.compute_epsilon(current_steps)
             rnd = np.random.uniform()
-            if rnd < epsilon_update:
+            if rnd < self.epsilon:
             # if rnd < eps:
                 action = np.random.choice(self.env.action_space.n) # exploracion
             else:
