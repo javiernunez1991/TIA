@@ -26,7 +26,7 @@ class DQNAgent(Agent):
     # @abstractmethod de abstract_agent.py
     def select_action(self, state, current_steps, train=True):
         
-        # Seleccionando acciones epsilongreedy-mente si estamos entranando y completamente greedy en otro caso.
+        # Seleccionando acciones epsilongreedy-mente si estamos entrenando y completamente greedy en otro caso.
         if train:
             epsilon_update = self.compute_epsilon(current_steps)
             rnd = np.random.uniform()
@@ -34,18 +34,18 @@ class DQNAgent(Agent):
             # if rnd < eps:
                 action = np.random.choice(self.env.action_space.n) # exploracion
             else:
-                with torch.no_grad():
-                    # aux = torch.FloatTensor(state).unsqueeze(0)#.to(self.device)
-                    aux = state.unsqueeze(0)#.to(self.device)
-                    q_values = self.policy_net(aux)
-                    action = np.argmax(q_values.tolist()[0]) # explotacion
-        else:
-            with torch.no_grad():
-                #aux = torch.FloatTensor(state).unsqueeze(0)#.to(self.device)
+                #with torch.no_grad():
+                # aux = torch.FloatTensor(state).unsqueeze(0)#.to(self.device)
                 aux = state.unsqueeze(0)#.to(self.device)
                 q_values = self.policy_net(aux)
                 action = np.argmax(q_values.tolist()[0]) # explotacion
-        
+        else:
+            #with torch.no_grad():
+            #aux = torch.FloatTensor(state).unsqueeze(0)#.to(self.device)
+            aux = state.unsqueeze(0)#.to(self.device)
+            q_values = self.policy_net(aux)
+            action = np.argmax(q_values.tolist()[0]) # explotacion
+    
         return action
 
 
