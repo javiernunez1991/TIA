@@ -120,7 +120,7 @@ class Agent(ABC):
 
             # Actualizar el estado
             state = next_state
-            s += 1
+            #s += 1
             
         env.close_video_recorder()
         env.close()
