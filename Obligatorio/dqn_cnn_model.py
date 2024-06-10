@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import torch.nn as nn
-import torch.nn.functional as F
+# import torch.nn.functional as F
 
 class DQN_CNN_Model(nn.Module):
     def __init__(self, state_shape, n_actions):
@@ -17,7 +17,7 @@ class DQN_CNN_Model(nn.Module):
         self.fc = nn.Sequential(
             nn.Linear(self._get_conv_out(state_shape), 256), # conecto las neuronas obtenidas con 256 nuevas neuronas ocultas
             nn.ReLU(), # aplico reLU
-            F.softmax(nn.Linear(256, n_actions), dim=-1) # conecto las 256 neuronas ocultas, con la capa final de 6 neuronas (tantas como acciones posibles)
+            nn.Linear(256, n_actions) # conecto las 256 neuronas ocultas, con la capa final de 6 neuronas (tantas como acciones posibles)
         )        
         
     def _get_conv_out(self, shape):
@@ -25,10 +25,10 @@ class DQN_CNN_Model(nn.Module):
           # Creo un tensor de 0s, con el mismo shape que el parametro env_inputs
           # Le aplico las mismas capas de convolución que le aplicaria a las imagenes
         o = int( np.prod(o.size()) ) # obtengo la cantidad final de neuronas que necesito
-        return o
+        return o 
 
 
     def forward(self, x):
         conv_out = self.conv(x).view(x.size()[0], -1) # Aplano los feature maps
-        q_values = self.fc(conv_out)
+        q_values = F.softmax(self.fc(conv_out), dim=1)
         return q_values       
