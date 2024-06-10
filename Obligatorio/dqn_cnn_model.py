@@ -25,7 +25,7 @@ class DQN_CNN_Model(nn.Module):
           # Creo un tensor de 0s, con el mismo shape que el parametro env_inputs
           # Le aplico las mismas capas de convolución que le aplicaria a las imagenes
         o = int( np.prod(o.size()) ) # obtengo la cantidad final de neuronas que necesito
-        return o n
+        return o
 
 
     def forward(self, x):
