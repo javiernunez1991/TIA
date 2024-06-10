@@ -103,14 +103,13 @@ class Agent(ABC):
         # Observar estado inicial como indica el algoritmo
         state, info = env.reset()
         # state = self.state_processing_function(state, self.device)
-        s=0
         env.start_video_recorder()
         
         while not done:
             env.render()  # Queremos hacer render para obtener un video al final.
 
             # Seleccione una accion de forma completamente greedy.
-            action = self.select_action(self.state_processing_function(state, self.device), s, False)
+            action = self.select_action(self.state_processing_function(state, self.device), False)
 
             # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
             next_state, reward, done, truncated, info = env.step(action)
@@ -121,7 +120,6 @@ class Agent(ABC):
 
             # Actualizar el estado
             state = next_state
-            #s += 1
             
         env.close_video_recorder()
         env.close()
