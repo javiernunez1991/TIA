@@ -30,10 +30,12 @@ class DQN_CNN_Model(nn.Module):
 
     def forward(self, x):
         conv_out = self.conv(x).view(x.size()[0], -1) # Aplano los feature maps
-        q_values = F.softmax(self.fc(conv_out), dim=1)
+        q_values = self.fc(conv_out)
         return q_values       
 
 
+
+# Para el caso sencillo de CartPole
 class DQN_Model(nn.Module):
     def __init__(self, input_dim, output_dim):
         super().__init__()
