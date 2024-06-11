@@ -92,7 +92,6 @@ class Agent(ABC):
         
     def compute_epsilon(self, steps_so_far):
          new_epsilon = self.epsilon_i - (steps_so_far * self.epsilon_decay)
-         #new_epsilon = self.epsilon_i * self.epsilon_decay
          new_epsilon = max(new_epsilon, self.epsilon_f)
          return new_epsilon
     
@@ -102,7 +101,6 @@ class Agent(ABC):
     
         # Observar estado inicial como indica el algoritmo
         state, info = env.reset()
-        # state = self.state_processing_function(state, self.device)
         env.start_video_recorder()
         
         while not done:
@@ -113,7 +111,6 @@ class Agent(ABC):
 
             # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
             next_state, reward, done, truncated, info = env.step(action)
-            #next_state = self.state_processing_function(next_state, self.device)
 
             if done or truncated:
                 break      
