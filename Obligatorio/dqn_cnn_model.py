@@ -35,7 +35,7 @@ class DQN_CNN_Model(nn.Module):
 
 
 class DQN_Model(nn.Module):
-    def __init__(self, state_shape, n_actions):
+    def __init__(self, input_dim, output_dim):
         super().__init__()
         
         self.fc1 = nn.Linear(in_features=input_dim, out_features=128)
