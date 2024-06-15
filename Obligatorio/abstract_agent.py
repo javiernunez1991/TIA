@@ -1,5 +1,5 @@
 import torch
-import torch.nn as nn
+#import torch.nn as nn
 from replay_memory import ReplayMemory, Transition
 import numpy as np
 from abc import ABC, abstractmethod
@@ -47,7 +47,7 @@ class Agent(ABC):
             for s in range(max_steps):
                 
                 # Seleccionar accion usando una política epsilon-greedy.
-                self.epsilon = np.round(self.compute_epsilon(total_steps), 5) # lo uso solo para los prints del final
+                self.epsilon_i = np.round(self.compute_epsilon(), 5) # lo uso solo para los prints del final
                 action = self.select_action(state, True)
                   
                 # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
@@ -90,8 +90,9 @@ class Agent(ABC):
         return rewards
     
         
-    def compute_epsilon(self, steps_so_far):
-         new_epsilon = self.epsilon_i - (steps_so_far * self.epsilon_decay)
+    def compute_epsilon(self):
+         # new_epsilon = self.epsilon_i - (steps_so_far * self.epsilon_decay)
+         new_epsilon = self.epsilon_i * self.epsilon_decay
          new_epsilon = max(new_epsilon, self.epsilon_f)
          return new_epsilon
     
