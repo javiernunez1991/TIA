@@ -92,7 +92,7 @@ class Agent(ABC):
         return rewards
     
         
-    def compute_epsilon(self, steps_so_far):
+    def compute_epsilon(self):
         self.epsilon = max(self.epsilon * self.epsilon_decay, self.epsilon_f)
         #new_epsilon = self.epsilon_i - (steps_so_far * self.epsilon_decay)
         #new_epsilon = max(new_epsilon, self.epsilon_f)
