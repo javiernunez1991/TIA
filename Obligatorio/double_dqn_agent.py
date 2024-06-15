@@ -20,6 +20,9 @@ class DoubleDQNAgent(Agent):
         # Asignar un optimizador para cada modelo (Adam)
         self.optimizer_A = optim.Adam(model_a.parameters(), lr=learning_rate)
         self.optimizer_B = optim.Adam(model_b.parameters(), lr=learning_rate)
+        
+        self.sync_target = sync_target
+        self.update_count = 0
 
 
     # @abstractmethod de abstract_agent.py
