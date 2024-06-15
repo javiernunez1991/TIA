@@ -16,10 +16,12 @@ class DoubleDQNAgent(Agent):
         # Asignar los modelos al agente (y enviarlos al dispositivo adecuado)
         self.policy_net = model_a.to(device)
         self.target_net = model_b.to(device)
+        self.target_net.load_state_dict(self.policy_net.state_dict())
+        self.target_net.eval()  # Target network is not used for training, so we set it to evaluation mode
 
         # Asignar un optimizador para cada modelo (Adam)
-        self.optimizer_A = optim.Adam(model_a.parameters(), lr=learning_rate)
-        self.optimizer_B = optim.Adam(model_b.parameters(), lr=learning_rate)
+        self.optimizer_A = optim.Adam(self.policy_net.parameters(), lr=learning_rate)
+        self.optimizer_B = optim.Adam(self.target_net.parameters(), lr=learning_rate)
         
         self.sync_target = sync_target
         self.update_count = 0
@@ -57,8 +59,9 @@ class DoubleDQNAgent(Agent):
                 optimizer = self.optimizer_B
             
             # Resetear gradientes
-            self.optimizer_A.zero_grad()
-            self.optimizer_B.zero_grad()
+            # self.optimizer_A.zero_grad()
+            # self.optimizer_B.zero_grad()
+            optimizer.zero_grad()
 
             # Obtener un minibatch de la memoria. Resultando en tensores de estados, acciones, recompensas, flags de terminacion y siguentes estados. 
             mini_batch = self.memory.sample(self.batch_size)
