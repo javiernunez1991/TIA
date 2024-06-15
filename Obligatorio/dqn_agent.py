@@ -28,7 +28,7 @@ class DQNAgent(Agent):
         # Seleccionando acciones epsilongreedy-mente si estamos entrenando y completamente greedy en otro caso.
         if train:
             rnd = np.random.uniform()
-            if rnd < self.epsilon_i:
+            if rnd < self.epsilon:
                 action = np.random.choice(self.env.action_space.n) # exploracion
             else:
                 aux = state.unsqueeze(0)
@@ -64,7 +64,7 @@ class DQNAgent(Agent):
 
             # Obtener max a' Q para los siguientes estados (del minibatch). Es importante hacer .detach() al resultado de este computo.
             # Si el estado siguiente es terminal (done) este valor debería ser 0.
-            next_q_values = self.policy_net(next_states)
+            next_q_values = self.policy_net(next_states).detach()
             q_next_states = torch.max(next_q_values, dim=1)#.cpu().sum().item()
             max_next_q_values = q_next_states.values.detach()
         
@@ -75,6 +75,6 @@ class DQNAgent(Agent):
 
             # Compute el costo y actualice los pesos.
             # En Pytorch la funcion de costo se llaman con (predicciones, objetivos) en ese orden.
-            loss = F.mse_loss(target, state_q_values) # Calculate el error
+            loss = F.mse_loss(target.unsqueeze(1), state_q_values) # Calculate el error
             loss.backward()  # Backpropagate loss
             self.optimizer.step()  # Update model weights
