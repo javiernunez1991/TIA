@@ -54,7 +54,8 @@ class DoubleDQNAgent(Agent):
                 optimizer = self.optimizer_B
             
             # Resetear gradientes
-            self.optimizer.zero_grad()
+            self.optimizer_A.zero_grad()
+            self.optimizer_B.zero_grad()
 
             # Obtener un minibatch de la memoria. Resultando en tensores de estados, acciones, recompensas, flags de terminacion y siguentes estados. 
             mini_batch = self.memory.sample(self.batch_size)
