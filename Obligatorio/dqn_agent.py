@@ -1,5 +1,5 @@
 import torch
-import torch.nn as nn
+#import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 # from torch.utils.tensorboard import SummaryWriter
@@ -28,7 +28,7 @@ class DQNAgent(Agent):
         # Seleccionando acciones epsilongreedy-mente si estamos entrenando y completamente greedy en otro caso.
         if train:
             rnd = np.random.uniform()
-            if rnd < self.epsilon:
+            if rnd < self.epsilon_i:
                 action = np.random.choice(self.env.action_space.n) # exploracion
             else:
                 aux = state.unsqueeze(0)
