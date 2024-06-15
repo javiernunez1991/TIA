@@ -72,7 +72,7 @@ class Agent(ABC):
               
             rewards.append(current_episode_reward)
             mean_reward = np.mean(rewards[-100:])
-            writer.add_scalar("epsilon", self.epsilon, total_steps)
+            writer.add_scalar("epsilon", self.epsilon_i, total_steps)
             writer.add_scalar("reward_100", mean_reward, total_steps)
             writer.add_scalar("reward", current_episode_reward, total_steps)
             avg_reward_last_eps = np.round(np.mean(rewards[-self.episode_block:]),2)
