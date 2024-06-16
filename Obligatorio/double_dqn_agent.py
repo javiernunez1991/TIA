@@ -82,7 +82,7 @@ class DoubleDQNAgent(Agent):
 
             target = rewards + (1 - dones) * self.gamma * max_next_q_values
 
-            loss = F.mse_loss(target.unsqueeze(1), state_q_values)
+            loss = F.mse_loss(target, state_q_values)
             loss.backward()
             optimizer.step()
 
