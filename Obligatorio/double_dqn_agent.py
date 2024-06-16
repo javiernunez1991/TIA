@@ -69,15 +69,15 @@ class DoubleDQNAgent(Agent):
             dones = torch.tensor([int(mini_batch[i].done) for i in range(self.batch_size)]).to(self.device) # paso los T-F, a 1-0
             next_states = torch.stack([mini_batch[i].next_state for i in range(self.batch_size)])#.to(self.device)
             
-            # Actualizar al azar Q_a o Q_b usando el otro para calcular el valor de los siguientes estados.
+            # Actualizar al azar Q_a o Q_b usando el otro para calcular el valor de los siguientes estados.            # Actualizar al azar Q_a o Q_b usando el otro para calcular el valor de los siguientes estados.
             q_values = w1(states)
-            state_q_values = q_values.gather(1, actions.unsqueeze(1))#.squeeze()
+            state_q_values = q_values.gather(1, actions.unsqueeze(1)).squeeze()
 
             next_q_values_policy = w2(next_states).detach()
             next_q_actions = next_q_values_policy.argmax(dim=1).unsqueeze(1)
             
             next_q_values_target = w1(next_states).detach()
-            max_next_q_values = next_q_values_target.gather(1, next_q_actions)#.squeeze()
+            max_next_q_values = next_q_values_target.gather(1, next_q_actions).squeeze()
 
             target = rewards + (1 - dones) * self.gamma * max_next_q_values
 
