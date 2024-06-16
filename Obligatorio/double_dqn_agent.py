@@ -75,7 +75,7 @@ class DoubleDQNAgent(Agent):
             state_q_values = q_values.gather(1, actions.unsqueeze(1)).squeeze()
 
             next_q_values_policy = w2(next_states).detach()
-            next_q_actions = next_q_values_policy.argmax(dim=1).unsqueeze(1)
+            next_q_actions = next_q_values_policy.argmax(dim=1)#.unsqueeze(1)
             
             next_q_values_target = w1(next_states).detach()
             max_next_q_values = next_q_values_target.gather(1, next_q_actions).squeeze()
