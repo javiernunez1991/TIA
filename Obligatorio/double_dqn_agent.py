@@ -16,8 +16,8 @@ class DoubleDQNAgent(Agent):
         # Asignar los modelos al agente (y enviarlos al dispositivo adecuado)
         self.policy_net = model_a.to(device)
         self.target_net = model_b.to(device)
-        self.target_net.load_state_dict(self.policy_net.state_dict())
-        self.target_net.eval()  # Target network is not used for training, so we set it to evaluation mode
+        # self.target_net.load_state_dict(self.policy_net.state_dict())
+        # self.target_net.eval()  # Target network is not used for training, so we set it to evaluation mode
 
         # Asignar un optimizador para cada modelo (Adam)
         self.optimizer_A = optim.Adam(self.policy_net.parameters(), lr=learning_rate)
@@ -49,7 +49,8 @@ class DoubleDQNAgent(Agent):
     
     def update_weights(self):
         if len(self.memory) > self.batch_size:
-            if random.random() < 0.5:
+            rnd = random.random() 
+            if rnd < 0.5:
                 w1 = self.policy_net
                 w2 = self.target_net
                 optimizer = self.optimizer_A
@@ -69,7 +70,7 @@ class DoubleDQNAgent(Agent):
             dones = torch.tensor([int(mini_batch[i].done) for i in range(self.batch_size)]).to(self.device) # paso los T-F, a 1-0
             next_states = torch.stack([mini_batch[i].next_state for i in range(self.batch_size)])#.to(self.device)
             
-            # Actualizar al azar Q_a o Q_b usando el otro para calcular el valor de los siguientes estados.            # Actualizar al azar Q_a o Q_b usando el otro para calcular el valor de los siguientes estados.
+            # Actualizar al azar Q_a o Q_b usando el otro para calcular el valor de los siguientes estados.
             q_values = w1(states)
             state_q_values = q_values.gather(1, actions.unsqueeze(1)).squeeze()
 
@@ -81,10 +82,16 @@ class DoubleDQNAgent(Agent):
 
             target = rewards + (1 - dones) * self.gamma * max_next_q_values
 
-            loss = F.mse_loss(target, state_q_values)
+            loss = F.mse_loss(target.unsqueeze(1), state_q_values)
             loss.backward()
             optimizer.step()
 
             self.update_count += 1
             if self.update_count % self.sync_target == 0:
-                self.target_net.load_state_dict(self.policy_net.state_dict())
+                if rnd < 0.5:
+                    w2.load_state_dict(w1.state_dict())
+                else:
+                    w1.load_state_dict(w2.state_dict())
+            # self.target_net.load_state_dict(self.policy_net.state_dict())
+                    
+                
