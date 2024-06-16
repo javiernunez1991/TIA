@@ -37,12 +37,10 @@ class DoubleDQNAgent(Agent):
                 action = np.random.choice(self.env.action_space.n) # exploracion
             else:
                 aux = state.unsqueeze(0)
-                # q_values = self.q_a(aux) + self.q_b(aux)
                 q_values = self.policy_net(aux)
                 action = np.argmax(q_values.tolist()[0]) # explotacion
         else:
             aux = state.unsqueeze(0)
-            # q_values = self.q_a(aux) + self.q_b(aux)
             q_values = self.policy_net(aux)
             action = np.argmax(q_values.tolist()[0]) # explotacion
     
@@ -52,15 +50,15 @@ class DoubleDQNAgent(Agent):
     def update_weights(self):
         if len(self.memory) > self.batch_size:
             if random.random() < 0.5:
-                network_to_update = self.policy_net
+                w1 = self.policy_net
+                w2 = self.target_net
                 optimizer = self.optimizer_A
             else:
-                network_to_update = self.target_net
+                w1 = self.target_net
+                w2 = self.policy_net
                 optimizer = self.optimizer_B
             
             # Resetear gradientes
-            # self.optimizer_A.zero_grad()
-            # self.optimizer_B.zero_grad()
             optimizer.zero_grad()
 
             # Obtener un minibatch de la memoria. Resultando en tensores de estados, acciones, recompensas, flags de terminacion y siguentes estados. 
@@ -72,14 +70,15 @@ class DoubleDQNAgent(Agent):
             next_states = torch.stack([mini_batch[i].next_state for i in range(self.batch_size)])#.to(self.device)
             
             # Actualizar al azar Q_a o Q_b usando el otro para calcular el valor de los siguientes estados.
-            q_values = network_to_update(states)
-            state_q_values = q_values.gather(1, actions.unsqueeze(1)).squeeze()
+            q_values = w1(states)
+            state_q_values = q_values.gather(1, actions.unsqueeze(1))#.squeeze()
 
-            next_q_values_policy = self.policy_net(next_states).detach()
-            next_q_actions = next_q_values_policy.argmax(dim=1).unsqueeze(1)
-
-            next_q_values_target = self.target_net(next_states).detach()
-            max_next_q_values = next_q_values_target.gather(1, next_q_actions).squeeze()
+            next_q_values_policy = w1(next_states).detach()
+            next_q_actions = torch.max(next_q_values_policy, dim=1)
+            next_q_actions = next_q_actions.values.detach()
+            
+            next_q_values_target = w2(next_states).detach()
+            max_next_q_values = next_q_values_target.gather(1, next_q_actions)#.squeeze()
 
             target = rewards + (1 - dones) * self.gamma * max_next_q_values
 
