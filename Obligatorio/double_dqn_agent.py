@@ -82,7 +82,7 @@ class DoubleDQNAgent(Agent):
 
             target = rewards + (1 - dones) * self.gamma * max_next_q_values
 
-            loss = F.mse_loss(target, state_q_values)
+            loss = F.mse_loss(target.unsqueeze(1), state_q_values)
             loss.backward()
             optimizer.step()
 
@@ -93,5 +93,3 @@ class DoubleDQNAgent(Agent):
                 else:
                     w1.load_state_dict(w2.state_dict())
             # self.target_net.load_state_dict(self.policy_net.state_dict())
-                    
-                
