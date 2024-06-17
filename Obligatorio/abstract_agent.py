@@ -45,7 +45,7 @@ class Agent(ABC):
             done = False
             truncated = False
             
-            for s in range(max_steps):
+            for s in range(max_steps_episode):
                 
                 # Seleccionar accion usando una política epsilon-greedy.
                 # self.epsilon_i = np.round(self.compute_epsilon(), 5) # lo uso solo para los prints del final
