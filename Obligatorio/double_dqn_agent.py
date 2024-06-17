@@ -41,7 +41,7 @@ class DoubleDQNAgent(Agent):
                 action = np.argmax(q_values.tolist()[0]) # explotacion
         else:
             aux = state.unsqueeze(0)
-            q_values = self.policy_net(aux)# + self.target_net(aux)
+            q_values = self.policy_net(aux) + self.target_net(aux)
             action = np.argmax(q_values.tolist()[0]) # explotacion
     
         return action
