@@ -28,14 +28,14 @@ class Agent(ABC):
         
     
     # def train(self, number_episodes = 50000, max_steps_episode = 10000, max_steps = 1_000_000, writer_name="default_writer_name"):
-    def train(self, number_episodes, max_steps_episode, max_steps, writer_name="default_writer_name"):
+    def train(self, number_episodes, max_steps_episode, writer_name="default_writer_name"):
         
         rewards = []
         total_steps = 0
         writer = SummaryWriter(comment="-" + writer_name)
   
         for ep in tqdm(range(number_episodes), unit=' episodes'):
-            if total_steps > max_steps:
+            if total_steps > max_steps_episode:
                 break
         
             # Observar estado inicial como indica el algoritmo
