@@ -90,8 +90,8 @@ class DoubleDQNAgent(Agent):
             optimizer.step()
 
             self.update_count += 1
+            if self.update_count % self.sync_target == 0:
                 self.target_net.load_state_dict(self.policy_net.state_dict())
-            # if self.update_count % self.sync_target == 0:
             #     if rnd < 0.5:
             #         w2.load_state_dict(w1.state_dict())
             #     else:
