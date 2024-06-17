@@ -37,11 +37,11 @@ class DoubleDQNAgent(Agent):
                 action = np.random.choice(self.env.action_space.n) # exploracion
             else:
                 aux = state.unsqueeze(0)
-                q_values = self.policy_net(aux)
+                q_values = self.policy_net(aux) + self.target_net(aux)
                 action = np.argmax(q_values.tolist()[0]) # explotacion
         else:
             aux = state.unsqueeze(0)
-            q_values = self.policy_net(aux)
+            q_values = self.policy_net(aux) + self.target_net(aux)
             action = np.argmax(q_values.tolist()[0]) # explotacion
     
         return action
@@ -93,3 +93,5 @@ class DoubleDQNAgent(Agent):
                 else:
                     w1.load_state_dict(w2.state_dict())
             # self.target_net.load_state_dict(self.policy_net.state_dict())
+                    
+                
