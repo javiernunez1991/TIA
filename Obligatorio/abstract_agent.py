@@ -42,14 +42,15 @@ class Agent(ABC):
             state, info = self.env.reset()   # inicializo state: Tiene 4 frames de 84x84 
             state = self.state_processing_function(state, self.device) # paso el state a tensor (funcion process_state de la notebook)
             current_episode_reward = 0.0
-            current_epsilon = 0.0
+            #current_epsilon = 0.0
             done = False
             truncated = False
             
             for s in range(max_steps_episode):
                 
                 # Seleccionar accion usando una política epsilon-greedy.
-                current_epsilon += self.epsilon
+                #current_epsilon += self.epsilon
+                epislon_values.append(self.epsilon)
                 self.compute_epsilon()
                 action = self.select_action(state, True)
                   
