@@ -16,8 +16,6 @@ class DoubleDQNAgent(Agent):
         # Asignar los modelos al agente (y enviarlos al dispositivo adecuado)
         self.policy_net = model_a.to(device)
         self.target_net = model_b.to(device)
-        # self.target_net.load_state_dict(self.policy_net.state_dict())
-        # self.target_net.eval()  # Target network is not used for training, so we set it to evaluation mode
 
         # Asignar un optimizador para cada modelo (Adam)
         self.optimizer_A = optim.Adam(self.policy_net.parameters(), lr=learning_rate)
@@ -29,8 +27,8 @@ class DoubleDQNAgent(Agent):
 
     # @abstractmethod de abstract_agent.py
     def select_action(self, state, train=True):
-        # Seleccionar acciones epsilongreedy-mente (sobre Q_a + Q_b) si estamos entrenando y completamente greedy en o/c.
         
+        # Seleccionar acciones epsilongreedy-mente (sobre Q_a + Q_b) si estamos entrenando y completamente greedy en o/c.
         if train:
             rnd = np.random.uniform()
             if rnd < self.epsilon:
@@ -79,12 +77,6 @@ class DoubleDQNAgent(Agent):
                 next_q_values = w2(next_states).detach().gather(1, next_actions).squeeze()
                 target = rewards + (1 - dones) * self.gamma * next_q_values
 
-            # state_q_next_values = w1(next_states).detach()
-            # next_q_actions = state_q_next_values.argmax(dim=1).unsqueeze(1)
-            # next_q_values_target = w2(next_states).detach()
-            # max_next_q_values = next_q_values_target.gather(1, next_q_actions).squeeze()
-            # target = rewards + (1 - dones) * self.gamma * max_next_q_values
-
             loss = F.mse_loss(target.unsqueeze(1), state_q_values)
             loss.backward()
             optimizer.step()
@@ -92,9 +84,5 @@ class DoubleDQNAgent(Agent):
             self.update_count += 1
             if self.update_count % self.sync_target == 0:
                 self.target_net.load_state_dict(self.policy_net.state_dict())
-            #     if rnd < 0.5:
-            #         w2.load_state_dict(w1.state_dict())
-            #     else:
-            #         w1.load_state_dict(w2.state_dict())
                     
                 
