@@ -78,7 +78,7 @@ class Agent(ABC):
             writer.add_scalar("reward_100", mean_reward, total_steps)
             writer.add_scalar("reward", current_episode_reward, total_steps)
             avg_reward_last_eps = np.round(np.mean(rewards[-self.episode_block:]),2)
-            epsilon_values = np.round(np.mean(epsilon_values[-self.episode_block:]),2)
+            avg_epsilon_values = np.round(np.mean(epsilon_values[-self.episode_block:]),2)
       
             # Report on the traning rewards every EPISODE BLOCK episodes
             if ep % self.episode_block == 0:    
