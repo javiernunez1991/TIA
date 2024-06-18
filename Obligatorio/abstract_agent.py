@@ -78,6 +78,7 @@ class Agent(ABC):
             writer.add_scalar("reward_100", mean_reward, total_steps)
             writer.add_scalar("reward", current_episode_reward, total_steps)
             avg_reward_last_eps = np.round(np.mean(rewards[-self.episode_block:]),2)
+            epsilon_values = np.round(np.mean(self.epsilon_values[-self.episode_block:]),2)
       
             # Report on the traning rewards every EPISODE BLOCK episodes
             if ep % self.episode_block == 0:    
@@ -88,7 +89,7 @@ class Agent(ABC):
         torch.save(self.policy_net.state_dict(), "GenericDQNAgent.dat")
         writer.close()
   
-        return rewards, self.epsilon_values
+        return rewards, epsilon_values
     
         
     def compute_epsilon(self):
