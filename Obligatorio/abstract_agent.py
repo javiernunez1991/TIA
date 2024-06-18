@@ -51,7 +51,10 @@ class Agent(ABC):
             for s in range(max_steps_episode):
                 
                 # Seleccionar accion usando una política epsilon-greedy.
-                self.compute_epsilon()
+                if total_steps == 0:
+                    self.epsilon = 1
+                else:
+                    self.compute_epsilon()
                 action = self.select_action(state, True)
                   
                 # Ejecutar la accion, observar resultado y procesarlo como indica el algoritmo.
