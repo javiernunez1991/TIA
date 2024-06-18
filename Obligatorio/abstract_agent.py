@@ -25,6 +25,7 @@ class Agent(ABC):
         self.episode_block = episode_block
         self.total_steps = 0
         self.epsilon = epsilon_i
+        self.epsilon_values = []
         
     
     # def train(self, number_episodes = 50000, max_steps_episode = 10000, max_steps = 1_000_000, writer_name="default_writer_name"):
@@ -48,7 +49,7 @@ class Agent(ABC):
             for s in range(max_steps_episode):
                 
                 # Seleccionar accion usando una política epsilon-greedy.
-                # self.epsilon_i = np.round(self.compute_epsilon(), 5) # lo uso solo para los prints del final
+                self.epsilon_values.append(self.epsilon)
                 self.compute_epsilon()
                 action = self.select_action(state, True)
                   
@@ -94,9 +95,6 @@ class Agent(ABC):
         
     def compute_epsilon(self):
         self.epsilon = max(self.epsilon * self.epsilon_decay, self.epsilon_f)
-        #new_epsilon = self.epsilon_i - (steps_so_far * self.epsilon_decay)
-        #new_epsilon = max(new_epsilon, self.epsilon_f)
-        #return new_epsilon
         return self.epsilon
     
     
