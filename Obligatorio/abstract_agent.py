@@ -24,13 +24,13 @@ class Agent(ABC):
         self.episode_block = episode_block
         self.total_steps = 0
         self.epsilon = epsilon_i
-        self.epsilon_values = []
         
     
     # def train(self, number_episodes = 50000, max_steps_episode = 10000, max_steps = 1_000_000, writer_name="default_writer_name"):
     def train(self, number_episodes, max_steps_episode, writer_name="default_writer_name"):
         
         rewards = []
+        epsilon_values = []
         total_steps = 0
         writer = SummaryWriter(comment="-" + writer_name)
   
@@ -48,7 +48,7 @@ class Agent(ABC):
             for s in range(max_steps_episode):
                 
                 # Seleccionar accion usando una política epsilon-greedy.
-                self.epsilon_values.append(self.epsilon)
+                epsilon_values.append(self.epsilon)
                 self.compute_epsilon()
                 action = self.select_action(state, True)
                   
@@ -78,7 +78,7 @@ class Agent(ABC):
             writer.add_scalar("reward_100", mean_reward, total_steps)
             writer.add_scalar("reward", current_episode_reward, total_steps)
             avg_reward_last_eps = np.round(np.mean(rewards[-self.episode_block:]),2)
-            epsilon_values = np.round(np.mean(self.epsilon_values[-self.episode_block:]),2)
+            epsilon_values = np.round(np.mean(epsilon_values[-self.episode_block:]),2)
       
             # Report on the traning rewards every EPISODE BLOCK episodes
             if ep % self.episode_block == 0:    
