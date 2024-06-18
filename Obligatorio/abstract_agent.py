@@ -91,7 +91,7 @@ class Agent(ABC):
         torch.save(self.policy_net.state_dict(), "GenericDQNAgent.dat")
         writer.close()
   
-        return rewards, epsilon_values
+        return rewards, total_steps_values, epsilon_values
     
         
     def compute_epsilon(self):
