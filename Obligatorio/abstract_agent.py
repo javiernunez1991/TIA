@@ -30,15 +30,17 @@ class Agent(ABC):
     def train(self, number_episodes, max_steps_episode, writer_name="default_writer_name"):
         
         rewards = []
+        avg_epsilon = [] 
         total_steps_values = []
-        epsilon_values = []
         total_steps = 0
         writer = SummaryWriter(comment="-" + writer_name)
   
         for ep in tqdm(range(number_episodes), unit=' episodes'):
             if total_steps > max_steps_episode:
                 break
-        
+
+            epsilon_values = []
+            
             # Observar estado inicial como indica el algoritmo
             state, info = self.env.reset()   # inicializo state: Tiene 4 frames de 84x84 
             state = self.state_processing_function(state, self.device) # paso el state a tensor (funcion process_state de la notebook)
@@ -58,6 +60,7 @@ class Agent(ABC):
                 next_state = self.state_processing_function(next_state, self.device) # paso el state a tensor (funcion process_state de la notebook)
                 current_episode_reward += reward
                 total_steps += 1
+                epsilon_values.append(self.epsilon)
       
                 # Guardar la transicion en la memoria
                 experience = Transition(state, action, reward, done, next_state)
@@ -74,6 +77,7 @@ class Agent(ABC):
               
             rewards.append(current_episode_reward)
             mean_reward = np.mean(rewards[-100:])
+            avg_epsilon.append(np.mean(epsilon_values))
             writer.add_scalar("epsilon", self.epsilon, total_steps)
             writer.add_scalar("reward_100", mean_reward, total_steps)
             writer.add_scalar("reward", current_episode_reward, total_steps)
@@ -82,16 +86,12 @@ class Agent(ABC):
             # Report on the traning rewards every EPISODE BLOCK episodes
             if ep % self.episode_block == 0:    
                 print(f"Episode {ep}: Avg. Reward {avg_reward_last_eps} over the last {self.episode_block} episodes - Epsilon {self.epsilon} - TotalSteps {total_steps}")
-                total_steps_values.append(total_steps)
-                epsilon_values.append(self.epsilon)
         print(f"Episode {ep + 1} - Avg. Reward {avg_reward_last_eps} over the last {self.episode_block} episodes - Epsilon {self.epsilon} - TotalSteps {total_steps}")
-        total_steps_values.append(total_steps)
-        epsilon_values.append(self.epsilon)
         
         torch.save(self.policy_net.state_dict(), "GenericDQNAgent.dat")
         writer.close()
   
-        return rewards, total_steps_values, epsilon_values
+        return rewards, avg_epsilon
     
         
     def compute_epsilon(self):
