@@ -1,5 +1,4 @@
 import torch
-#import torch.nn as nn
 from replay_memory import ReplayMemory, Transition
 import numpy as np
 from abc import ABC, abstractmethod
@@ -80,17 +79,16 @@ class Agent(ABC):
             writer.add_scalar("reward", current_episode_reward, total_steps)
             avg_reward_last_eps = np.round(np.mean(rewards[-self.episode_block:]),2)
       
-                # Report on the traning rewards every EPISODE BLOCK episodes
+            # Report on the traning rewards every EPISODE BLOCK episodes
             if ep % self.episode_block == 0:    
                 print(f"Episode {ep}: Avg. Reward {avg_reward_last_eps} over the last {self.episode_block} episodes - Epsilon {self.epsilon} - TotalSteps {total_steps}")
-                # print(f"Episode {ep}: Avg. Reward: {avg_reward_last_eps}, over the last {self.episode_block} episodes - Epsilon: {self.epsilon} - TotalSteps: {total_steps}")
         print(f"Episode {ep + 1} - Avg. Reward {avg_reward_last_eps} over the last {self.episode_block} episodes - Epsilon {self.epsilon} - TotalSteps {total_steps}")
 
         
         torch.save(self.policy_net.state_dict(), "GenericDQNAgent.dat")
         writer.close()
   
-        return rewards
+        return rewards, self.epsilon_values
     
         
     def compute_epsilon(self):
