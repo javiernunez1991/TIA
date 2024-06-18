@@ -50,7 +50,7 @@ class Agent(ABC):
                 
                 # Seleccionar accion usando una política epsilon-greedy.
                 #current_epsilon += self.epsilon
-                epislon_values.append(self.epsilon)
+                epsilon_values.append(self.epsilon)
                 self.compute_epsilon()
                 action = self.select_action(state, True)
                   
