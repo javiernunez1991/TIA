@@ -16,6 +16,7 @@ class DQN_CNN_Model(nn.Module):
         
         self.fc = nn.Sequential(
             nn.Linear(self._get_conv_out(state_shape), 256), # conecto las neuronas obtenidas con 256 nuevas neuronas ocultas
+            nn.dropout(p=0.2),
             nn.ReLU(), # aplico reLU
             nn.Linear(256, n_actions) # conecto las 256 neuronas ocultas, con la capa final de 6 neuronas (tantas como acciones posibles)
         )        
